@@ -11,13 +11,13 @@ class RedisPersistence:
 class AppendOnlyFilePersistence(RedisPersistence):
     def __init__(self, filename: str):
         self._filename = filename
-        self.file = open(filename, mode="ab", buffering=0)
 
     def log_command(self, command: Array) -> None:
-        self.file.write(f"*{len(command)}\r\n".encode())
+        with open(self._filename, mode="ab", buffering=0) as file:
+            file.write(f"*{len(command)}\r\n".encode())
 
-        for item in command:
-            self.file.write(item.resp_encode())
+            for item in command:
+                file.write(item.resp_encode())
 
 
 class NoPersistence(RedisPersistence):
